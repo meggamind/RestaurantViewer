@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RestuarantViewer</string>
+    <string name="previousButton">Previous</string>
+    <string name="nextButton">Next</string>
 </resources>
