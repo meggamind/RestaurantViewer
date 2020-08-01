@@ -23,7 +23,7 @@
                 android:id="@+id/businessViewPager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="12dp"
+                android:layout_marginHorizontal="8dp"
                 android:layout_marginVertical="12dp" />
         </LinearLayout>
 
@@ -40,6 +40,7 @@
                 android:layout_marginEnd="40dp"
                 android:layout_marginRight="40dp"
                 android:background="@color/previous"
+                android:onClick="onPrevious"
                 android:text="@string/previousButton"
                 android:textColor="@color/white" />
 
@@ -50,6 +51,7 @@
                 android:layout_marginStart="40dp"
                 android:layout_marginLeft="40dp"
                 android:background="@color/next"
+                android:onClick="onNext"
                 android:text="@string/nextButton"
                 android:textColor="@color/white" />
         </LinearLayout>

@@ -2,6 +2,7 @@ package com.aniket91.afiirm.restuarantviewer.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.aniket91.afiirm.restuarantviewer.R
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.businessViewPager.apply {
             adapter = businessCardStackAdapter
-            setPageTransformer(false, BusinessCardStackTransformer())
+            setPageTransformer(true, BusinessCardStackTransformer())
             offscreenPageLimit = 5
         }
 
@@ -46,5 +47,17 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    fun onNext(view: View) {
+        binding.businessViewPager.apply {
+            setCurrentItem(currentItem + 1, true)
+        }
+    }
+
+    fun onPrevious(view: View) {
+        binding.businessViewPager.apply {
+            setCurrentItem(currentItem - 1, true)
+        }
     }
 }

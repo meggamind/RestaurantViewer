@@ -5,11 +5,11 @@ import androidx.viewpager.widget.ViewPager
 
 class BusinessCardStackTransformer : ViewPager.PageTransformer {
         override fun transformPage(page: View, position: Float) {
-            if (position > 0) {
+            if (position >= 0) {
                 page.scaleX = 0.8f
-                page.scaleY = 0.08f
+                page.scaleY = 0.9f
                 page.translationX =  - page.width * position
-                page.translationY = 30 * position
+                page.translationY = - 30 * position
             }
         }
     }
