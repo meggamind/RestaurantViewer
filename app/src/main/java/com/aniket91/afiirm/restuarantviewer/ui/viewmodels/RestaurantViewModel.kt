@@ -1,6 +1,7 @@
 package com.aniket91.afiirm.restuarantviewer.ui.viewmodels
 
 import android.util.Log
+import androidx.databinding.Bindable
 import androidx.databinding.Observable
 import androidx.lifecycle.*
 import com.aniket91.afiirm.restuarantviewer.model.entity.Business
@@ -12,16 +13,29 @@ class RestaurantViewModel(private val businessRepository: BusinessRepository) : 
     Observable {
 
     var business = MutableLiveData<List<Business>>()
+    var hideKeyboard = MutableLiveData(false)
+
+    @Bindable
+    val inputBusinessSearchName = MutableLiveData("")
 
     private var offset = 0
     private var coOrdinate: CoOrdinate = CoOrdinate(0.0, 0.0)
-    var currentBusinessIndex = MutableLiveData<Int>(0)
+    var currentBusinessIndex = MutableLiveData(0)
+
+    override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
+    }
+
+    override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
+    }
 
     fun loadRestaurants(coOrdinate: CoOrdinate): MutableLiveData<List<Business>> {
         this.coOrdinate = coOrdinate
+        resetOffset()
+
         viewModelScope.launch {
             business.postValue(businessRepository.fetchRestaurants(coOrdinate, offset).value)
         }
+
         return business
     }
 
@@ -50,6 +64,22 @@ class RestaurantViewModel(private val businessRepository: BusinessRepository) : 
         }
     }
 
+    fun loadBusiness() {
+        Log.i(TAG, "business to discover: ${inputBusinessSearchName.value.toString()}")
+        hideKeyboard.postValue(false)
+        resetOffset()
+        viewModelScope.launch {
+            business.postValue(
+                businessRepository.fetchBusiness(
+                    coOrdinate,
+                    offset,
+                    inputBusinessSearchName.value.toString()
+                ).value
+            )
+            inputBusinessSearchName.postValue(null)
+        }
+    }
+
     fun toggleFavorite(favoriteBusiness: Business) {
         viewModelScope.launch {
             if (!favoriteBusiness.isFavorite) {
@@ -60,10 +90,8 @@ class RestaurantViewModel(private val businessRepository: BusinessRepository) : 
         }
     }
 
-    override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
-    }
-
-    override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
+    private fun resetOffset() {
+        offset = 0
     }
 
     companion object {

@@ -7,16 +7,19 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.aniket91.afiirm.restuarantviewer.R
 import com.aniket91.afiirm.restuarantviewer.api.ApiClient
 import com.aniket91.afiirm.restuarantviewer.databinding.ActivityMainBinding
 import com.aniket91.afiirm.restuarantviewer.db.AppDatabase
+import com.aniket91.afiirm.restuarantviewer.extensions.hideKeyboard
 import com.aniket91.afiirm.restuarantviewer.model.ModelMapper
 import com.aniket91.afiirm.restuarantviewer.model.entity.CoOrdinate
 import com.aniket91.afiirm.restuarantviewer.repository.BusinessRepository
 import com.aniket91.afiirm.restuarantviewer.ui.adapter.BusinessCardStackAdapter
 import com.aniket91.afiirm.restuarantviewer.ui.fragment.BusinessCardStackTransformer
 import com.aniket91.afiirm.restuarantviewer.ui.viewmodels.RestaurantViewModel
+import com.aniket91.afiirm.restuarantviewer.ui.viewmodels.RestaurantViewModelFactory
 import com.aniket91.afiirm.restuarantviewer.utils.PermissionUtils
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -54,18 +57,17 @@ class MainActivity : AppCompatActivity() {
             ModelMapper(),
             AppDatabase.getInstance(applicationContext).businessDao()
         )
-        val restaurantViewModel = RestaurantViewModel(repo)
+        val factory = RestaurantViewModelFactory(repo)
+        val restaurantViewModel =
+            ViewModelProviders.of(this, factory).get(RestaurantViewModel::class.java)
+        binding.restaurantViewModel = restaurantViewModel
 
         val businessCardStackAdapter = BusinessCardStackAdapter(
             supportFragmentManager,
             restaurantViewModel.currentBusinessIndex
         ) { business -> restaurantViewModel.toggleFavorite(business) }
 
-        binding.businessViewPager.apply {
-            adapter = businessCardStackAdapter
-            setPageTransformer(true, BusinessCardStackTransformer())
-            offscreenPageLimit = 5
-        }
+        setUpViewPager(businessCardStackAdapter)
 
         restaurantViewModel.loadRestaurants(CoOrdinate(latitude = latitude, longitude = longitude))
             .observe(this, Observer { businessList ->
@@ -75,9 +77,28 @@ class MainActivity : AppCompatActivity() {
             })
 
         restaurantViewModel.apply {
+
+            hideKeyboard.observe(this@MainActivity, Observer {
+                hideKeyboard()
+            })
+
+            loadRestaurants(CoOrdinate(latitude = latitude, longitude = longitude))
+                .observe(this@MainActivity, Observer { businessList ->
+                    businessList?.let { fetchedBusinessList ->
+                        businessCardStackAdapter.setBusinesses(fetchedBusinessList)
+                    }
+                })
+
             currentBusinessIndex.observe(this@MainActivity, Observer { index ->
                 loadAdditionalRestaurants(index)
             })
+        }
+    }
+
+    private fun setUpViewPager(businessCardStackAdapter: BusinessCardStackAdapter) {
+        binding.businessViewPager.apply {
+            adapter = businessCardStackAdapter
+            setPageTransformer(true, BusinessCardStackTransformer())
         }
     }
 
@@ -127,9 +148,5 @@ class MainActivity : AppCompatActivity() {
         } else {
             fetchCurrentLocation(::initAdapter)
         }
-    }
-
-    companion object {
-        private val TAG = MainActivity::class.java.simpleName
     }
 }

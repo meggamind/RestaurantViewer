@@ -2,4 +2,6 @@
     <string name="app_name">RestuarantViewer</string>
     <string name="previousButton">Previous</string>
     <string name="nextButton">Next</string>
+    <string name="searchHint">Enter business to search</string>
+    <string name="discoverButton">Discover</string>
 </resources>

@@ -46,8 +46,6 @@ class ModelMapper() : IModelMapper {
             }
         }
 
-        list.forEach { println("name: ${it.name}, isFavorite: ${it.isFavorite}") }
-
         return list
     }
 }

@@ -19,8 +19,16 @@ class BusinessRepository(
         coOrdinate: CoOrdinate,
         offset: Int
     ): MutableLiveData<List<Business>> {
+        return fetchBusiness(coOrdinate, offset, RESTAURANT_SEARCH_TERM)
+    }
+
+    suspend fun fetchBusiness(
+        coOrdinate: CoOrdinate,
+        offset: Int,
+        businessToSearch: String
+    ): MutableLiveData<List<Business>> {
         val response = yelpService.discoverBusiness(
-            "restaurants",
+            businessToSearch,
             BUSINESS_FETCH_LIMIT,
             offset,
             coOrdinate.longitude,
@@ -49,5 +57,6 @@ class BusinessRepository(
 
     companion object {
         const val BUSINESS_FETCH_LIMIT = 20
+        const val RESTAURANT_SEARCH_TERM = "Restaurant"
     }
 }

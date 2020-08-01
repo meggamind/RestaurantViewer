@@ -13,7 +13,7 @@ class BusinessCardStackAdapter(
     private val toggleFavorite: (business: Business) -> Unit
 ) :
     FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-    private var businessList = listOf<Business>()
+    private var businessList = mutableListOf<Business>()
 
     override fun getItem(position: Int): Fragment {
         currentBusinessIndex.postValue(position)
@@ -24,7 +24,10 @@ class BusinessCardStackAdapter(
     override fun getCount(): Int = businessList.size
 
     fun setBusinesses(businesses: List<Business>) {
-        businessList = businesses
+        businessList.clear()
+        notifyDataSetChanged()
+
+        businessList.addAll(businesses)
         notifyDataSetChanged()
     }
 }
