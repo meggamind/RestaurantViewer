@@ -13,7 +13,7 @@ class BusinessRepository(
     private val listOfBusiness: MutableLiveData<List<Business>> = MutableLiveData()
 
     suspend fun fetchRestaurants(coOrdinate: CoOrdinate): MutableLiveData<List<Business>> {
-        val response = yelpService.discoverBusiness(coOrdinate.longitude, coOrdinate.latitude)
+        val response = yelpService.discoverBusiness("restaurants", coOrdinate.longitude, coOrdinate.latitude)
 
         if (response.isSuccessful) {
             println("isSuccessful")
