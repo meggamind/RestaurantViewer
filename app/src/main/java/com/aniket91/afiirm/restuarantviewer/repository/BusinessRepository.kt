@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.aniket91.afiirm.restuarantviewer.api.YelpService
 import com.aniket91.afiirm.restuarantviewer.model.IModelMapper
 import com.aniket91.afiirm.restuarantviewer.model.entity.Business
+import com.aniket91.afiirm.restuarantviewer.model.entity.CoOrdinate
 
 class BusinessRepository(
     private val yelpService: YelpService,
@@ -11,8 +12,8 @@ class BusinessRepository(
 ) {
     private val listOfBusiness: MutableLiveData<List<Business>> = MutableLiveData()
 
-    suspend fun fetchRestaurants(): MutableLiveData<List<Business>> {
-        val response = yelpService.discoverBusiness2("new York")
+    suspend fun fetchRestaurants(coOrdinate: CoOrdinate): MutableLiveData<List<Business>> {
+        val response = yelpService.discoverBusiness(coOrdinate.longitude, coOrdinate.latitude)
 
         if (response.isSuccessful) {
             println("isSuccessful")

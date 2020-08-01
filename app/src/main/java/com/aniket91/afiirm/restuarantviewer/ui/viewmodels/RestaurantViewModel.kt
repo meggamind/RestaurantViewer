@@ -3,6 +3,7 @@ package com.aniket91.afiirm.restuarantviewer.ui.viewmodels
 import androidx.databinding.Observable
 import androidx.lifecycle.*
 import com.aniket91.afiirm.restuarantviewer.model.entity.Business
+import com.aniket91.afiirm.restuarantviewer.model.entity.CoOrdinate
 import com.aniket91.afiirm.restuarantviewer.repository.BusinessRepository
 import kotlinx.coroutines.launch
 
@@ -11,9 +12,9 @@ class RestaurantViewModel(private val businessRepository: BusinessRepository) : 
 
     var business = MutableLiveData<List<Business>>()
 
-    fun loadRestaurants(): MutableLiveData<List<Business>> {
+    fun loadRestaurants(coOrdinate: CoOrdinate): MutableLiveData<List<Business>> {
         viewModelScope.launch {
-            business.postValue(businessRepository.fetchRestaurants().value)
+            business.postValue(businessRepository.fetchRestaurants(coOrdinate).value)
         }
         return business
     }

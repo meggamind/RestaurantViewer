@@ -13,9 +13,4 @@ interface YelpService {
         @Query("longitude") longitude: Double,
         @Query("latitude") latitude: Double
     ): Response<BusinessResponse>
-
-    @GET("businesses/search")
-    suspend fun discoverBusiness2(
-        @Query("location") location: String
-    ): Response<BusinessResponse>
 }

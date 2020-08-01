@@ -13,6 +13,7 @@ import com.aniket91.afiirm.restuarantviewer.R
 import com.aniket91.afiirm.restuarantviewer.api.ApiClient
 import com.aniket91.afiirm.restuarantviewer.databinding.ActivityMainBinding
 import com.aniket91.afiirm.restuarantviewer.model.ModelMapper
+import com.aniket91.afiirm.restuarantviewer.model.entity.CoOrdinate
 import com.aniket91.afiirm.restuarantviewer.repository.BusinessRepository
 import com.aniket91.afiirm.restuarantviewer.ui.adapter.BusinessCardStackAdapter
 import com.aniket91.afiirm.restuarantviewer.ui.fragment.BusinessCardStackTransformer
@@ -21,7 +22,7 @@ import com.aniket91.afiirm.restuarantviewer.utils.PermissionUtils
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
-class MainActivity : AppCompatActivity(), LocationListener {
+class MainActivity : AppCompatActivity() {
     var locationPermissionGranted = false
     lateinit var binding: ActivityMainBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -32,8 +33,6 @@ class MainActivity : AppCompatActivity(), LocationListener {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.lifecycleOwner = this
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-
 
         checkPermission()
     }
@@ -62,14 +61,15 @@ class MainActivity : AppCompatActivity(), LocationListener {
         val repo = BusinessRepository(apiClient.getYelpService(), ModelMapper())
         val restaurantViewModel = RestaurantViewModel(repo)
 
-        restaurantViewModel.loadRestaurants().observe(this, Observer { businessList ->
-            businessList?.apply {
-                businessCardStackAdapter.setBusinesses(this)
-                forEach { business ->
-                    println("business: ${business.image_url}")
+        restaurantViewModel.loadRestaurants(CoOrdinate(latitude = latitude, longitude = longitude))
+            .observe(this, Observer { businessList ->
+                businessList?.apply {
+                    businessCardStackAdapter.setBusinesses(this)
+                    forEach { business ->
+                        println("business: ${business.image_url}")
+                    }
                 }
-            }
-        })
+            })
     }
 
     fun onNext(view: View) {
@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         private val TAG = MainActivity::class.java.simpleName
     }
 
-    override fun onLocationChanged(p0: Location) {
-        println("onLocationChanged location: ${p0.latitude}, ${p0.longitude}")
-    }
+//    override fun onLocationChanged(p0: Location) {
+//        println("onLocationChanged location: ${p0.latitude}, ${p0.longitude}")
+//    }
 }
