@@ -1,7 +1,14 @@
 package com.aniket91.afiirm.restuarantviewer.model.entity
 
-data class Business(
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "business_table")
+open class Business(
+    @PrimaryKey
+    val id: String,
     val image_url: String,
     val name: String,
-    val rating: Double
+    val rating: Double,
+    var isFavorite: Boolean = false
 )

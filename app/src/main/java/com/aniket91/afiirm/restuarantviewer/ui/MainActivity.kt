@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import com.aniket91.afiirm.restuarantviewer.R
 import com.aniket91.afiirm.restuarantviewer.api.ApiClient
 import com.aniket91.afiirm.restuarantviewer.databinding.ActivityMainBinding
+import com.aniket91.afiirm.restuarantviewer.db.AppDatabase
 import com.aniket91.afiirm.restuarantviewer.model.ModelMapper
 import com.aniket91.afiirm.restuarantviewer.model.entity.CoOrdinate
 import com.aniket91.afiirm.restuarantviewer.repository.BusinessRepository
@@ -48,13 +49,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun initAdapter(longitude: Double, latitude: Double) {
         val apiClient = ApiClient()
-        val repo = BusinessRepository(apiClient.getYelpService(), ModelMapper())
+        val repo = BusinessRepository(
+            apiClient.getYelpService(),
+            ModelMapper(),
+            AppDatabase.getInstance(applicationContext).businessDao()
+        )
         val restaurantViewModel = RestaurantViewModel(repo)
 
         val businessCardStackAdapter = BusinessCardStackAdapter(
             supportFragmentManager,
             restaurantViewModel.currentBusinessIndex
-        )
+        ) { business -> restaurantViewModel.toggleFavorite(business) }
 
         binding.businessViewPager.apply {
             adapter = businessCardStackAdapter
@@ -66,9 +71,6 @@ class MainActivity : AppCompatActivity() {
             .observe(this, Observer { businessList ->
                 businessList?.apply {
                     businessCardStackAdapter.setBusinesses(this)
-                    forEach { business ->
-                        println("business: ${business.image_url}")
-                    }
                 }
             })
 

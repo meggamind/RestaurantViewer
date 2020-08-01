@@ -50,6 +50,16 @@ class RestaurantViewModel(private val businessRepository: BusinessRepository) : 
         }
     }
 
+    fun toggleFavorite(business: Business) {
+        viewModelScope.launch {
+            if (!business.isFavorite) {
+                businessRepository.addFavorite(business)
+            } else {
+                businessRepository.removeFavorite(business)
+            }
+        }
+    }
+
     override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
     }
 
