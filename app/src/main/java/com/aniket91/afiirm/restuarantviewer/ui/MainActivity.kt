@@ -2,8 +2,6 @@ package com.aniket91.afiirm.restuarantviewer.ui
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationListener
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -49,17 +47,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initAdapter(longitude: Double, latitude: Double) {
-        val businessCardStackAdapter = BusinessCardStackAdapter(supportFragmentManager)
+        val apiClient = ApiClient()
+        val repo = BusinessRepository(apiClient.getYelpService(), ModelMapper())
+        val restaurantViewModel = RestaurantViewModel(repo)
+
+        val businessCardStackAdapter = BusinessCardStackAdapter(
+            supportFragmentManager,
+            restaurantViewModel.currentBusinessIndex
+        )
 
         binding.businessViewPager.apply {
             adapter = businessCardStackAdapter
             setPageTransformer(true, BusinessCardStackTransformer())
             offscreenPageLimit = 5
         }
-
-        val apiClient = ApiClient()
-        val repo = BusinessRepository(apiClient.getYelpService(), ModelMapper())
-        val restaurantViewModel = RestaurantViewModel(repo)
 
         restaurantViewModel.loadRestaurants(CoOrdinate(latitude = latitude, longitude = longitude))
             .observe(this, Observer { businessList ->
@@ -70,6 +71,12 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             })
+
+        restaurantViewModel.apply {
+            currentBusinessIndex.observe(this@MainActivity, Observer { index ->
+                loadAdditionalRestaurants(index)
+            })
+        }
     }
 
     fun onNext(view: View) {
@@ -123,8 +130,4 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private val TAG = MainActivity::class.java.simpleName
     }
-
-//    override fun onLocationChanged(p0: Location) {
-//        println("onLocationChanged location: ${p0.latitude}, ${p0.longitude}")
-//    }
 }

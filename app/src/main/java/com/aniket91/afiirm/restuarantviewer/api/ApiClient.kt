@@ -1,15 +1,16 @@
 package com.aniket91.afiirm.restuarantviewer.api
 
 import com.aniket91.afiirm.restuarantviewer.api.interceptor.AuthInterceptor
+import com.aniket91.afiirm.restuarantviewer.api.service.YelpBusinessService
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiClient {
-    private lateinit var apiService: YelpService
+    private lateinit var apiService: YelpBusinessService
 
-    fun getYelpService(): YelpService {
+    fun getYelpService(): YelpBusinessService {
         if (!::apiService.isInitialized) {
             val retrofit = Retrofit.Builder()
                 .baseUrl(BASE_YELP_URL)
@@ -17,7 +18,7 @@ class ApiClient {
                 .client(okHttpClient())
                 .build()
 
-            apiService = retrofit.create(YelpService::class.java)
+            apiService = retrofit.create(YelpBusinessService::class.java)
 
         }
 
