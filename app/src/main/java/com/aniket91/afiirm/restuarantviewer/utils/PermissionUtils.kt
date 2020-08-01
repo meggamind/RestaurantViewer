@@ -10,14 +10,20 @@ import androidx.core.content.ContextCompat
 object PermissionUtils {
     const val REQUEST_CODE = 123
 
-    private fun hasPermissionBeingGranted(context: Context, permission: String) =
-        ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+    private fun hasPermissionBeingGranted(context: Context, permissions: Array<String>): Boolean {
+        permissions.forEach {
+            if (ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED) {
+                return false
+            }
+        }
+        return true
+    }
 
-    fun requestPermission(activity: Activity, permission: String) {
-        ActivityCompat.requestPermissions(activity, arrayOf(permission), REQUEST_CODE)
+    fun requestPermissions(activity: Activity, permissions: Array<String>) {
+        ActivityCompat.requestPermissions(activity, permissions, REQUEST_CODE)
     }
 
     fun hasLocationPermissionGranted(activity: Activity): Boolean {
-        return hasPermissionBeingGranted(activity, Manifest.permission.ACCESS_COARSE_LOCATION)
+        return hasPermissionBeingGranted(activity, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION))
     }
 }
