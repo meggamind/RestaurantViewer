@@ -38,22 +38,16 @@ class BusinessCardStackFragment(
         setFavorite(view.context)
 
         favoriteImageView.setOnClickListener {
-            setFavorite(it.context)
             toggleFavorite(business)
+            business.isFavorite = !business.isFavorite
+            setFavorite(it.context)
         }
     }
 
     private fun setFavorite(context: Context) {
-        if (business.isFavorite) {
-            business.isFavorite = false
-            favoriteImageView.background =
-                ContextCompat.getDrawable(context, R.drawable.ic_favorite_black_24dp)
-        } else {
-            business.isFavorite = true
-            favoriteImageView.background = ContextCompat.getDrawable(
-                context,
+        favoriteImageView.background = ContextCompat.getDrawable(
+            context, if (business.isFavorite) R.drawable.ic_favorite_black_24dp else
                 R.drawable.ic_favorite_border_black_24dp
-            )
-        }
+        )
     }
 }

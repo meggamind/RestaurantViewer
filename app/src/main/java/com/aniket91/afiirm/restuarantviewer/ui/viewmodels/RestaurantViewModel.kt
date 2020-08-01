@@ -50,12 +50,12 @@ class RestaurantViewModel(private val businessRepository: BusinessRepository) : 
         }
     }
 
-    fun toggleFavorite(business: Business) {
+    fun toggleFavorite(favoriteBusiness: Business) {
         viewModelScope.launch {
-            if (!business.isFavorite) {
-                businessRepository.addFavorite(business)
+            if (!favoriteBusiness.isFavorite) {
+                businessRepository.addFavorite(favoriteBusiness)
             } else {
-                businessRepository.removeFavorite(business)
+                businessRepository.removeFavorite(favoriteBusiness)
             }
         }
     }
